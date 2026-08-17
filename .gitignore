@@ -1,0 +1,7 @@
+# macOS
+.DS_Store
+
+# bkit 플러그인 로컬 세션 상태(감사로그/체크포인트 등) — 프로젝트 소스 아님
+.bkit/
+
+# web/ 하위는 web/.gitignore가 node_modules, .next, .env* 등을 자체적으로 처리

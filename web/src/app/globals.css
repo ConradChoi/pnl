@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/* 기존 P&L 온라인 대시보드.html 팔레트 계승 (ARCHITECTURE.md 참고) */
+:root {
+  --background: #f9f9f7;
+  --surface: #ffffff;
+  --foreground: #0b0b0b;
+  --muted: #898781;
+  --border: rgba(11, 11, 11, 0.1);
+  --accent: #6b3fa0;
+  --accent-deep: #4e2c79;
+  --good: #006300;
+  --bad: #e34948;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0d0d0d;
+    --surface: #1a1a19;
+    --foreground: #ffffff;
+    --muted: #898781;
+    --border: rgba(255, 255, 255, 0.1);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Tailwind Preflight가 모든 요소의 margin을 0으로 리셋하면서, <dialog showModal>의
+   기본 중앙정렬(margin:auto 기반)이 깨져 왼쪽 위로 붙는 문제가 있었다 (DeleteAction,
+   DecisionButtons 등에서 사용). element selector가 Preflight의 `*` 리셋보다 우선하므로
+   여기서 명시적으로 복원한다. */
+dialog {
+  margin: auto;
+}
