@@ -23,7 +23,7 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ year?: string; status?: string; q?: string; sort?: string; dir?: string }>;
 }) {
-  const { year, status, q, sort = "net", dir = "desc" } = await searchParams;
+  const { year, status, q, sort = "date", dir = "desc" } = await searchParams;
   await requireMembership();
   const supabase = await createClient();
 
@@ -126,6 +126,8 @@ export default async function DashboardPage({
     const cmp = ka < kb ? -1 : ka > kb ? 1 : 0;
     return dir === "asc" ? cmp : -cmp;
   });
+  const DASHBOARD_ROW_LIMIT = 15;
+  const displayRows = sorted.slice(0, DASHBOARD_ROW_LIMIT);
 
   const years = [...new Set((trendRaw ?? []).map((t) => (t as { tx_date: string }).tx_date.slice(0, 4)))].sort();
 
@@ -196,7 +198,18 @@ export default async function DashboardPage({
             trendData={trendData}
           />
 
-          <Card className="mt-6 overflow-x-auto p-0">
+          <div className="mt-6 mb-2 flex items-center justify-between">
+            <p className="text-sm font-bold">
+              최근 거래내역
+              <span className="ml-2 text-xs font-normal text-muted">
+                최근 {displayRows.length}건 표시 (전체 {sorted.length}건)
+              </span>
+            </p>
+            <Link href="/projects" className="text-xs font-semibold text-accent hover:underline">
+              전체보기 →
+            </Link>
+          </div>
+          <Card className="overflow-x-auto p-0">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border text-left text-xs text-muted">
@@ -208,7 +221,7 @@ export default async function DashboardPage({
                 </tr>
               </thead>
               <tbody>
-                {sorted.map((r) => (
+                {displayRows.map((r) => (
                   <tr key={r.id} className="border-b border-border last:border-0">
                     <td className="px-4 py-3">{r.date}</td>
                     <td className="px-4 py-3">{r.project}</td>
