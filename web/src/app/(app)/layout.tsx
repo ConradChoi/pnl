@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { requireMembership, getEffectivePermissions, can } from "@/lib/data/membership";
-import { logout } from "@/lib/actions/auth";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const roleLabel: Record<string, string> = {
   owner: "오너",
@@ -16,59 +15,31 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const canSeeSettings = membership.role === "owner" || can(perms, "company_settings");
   const canUpload = can(perms, "excel_upload");
 
+  const navItems = [
+    { href: "/dashboard", label: "대시보드" },
+    { href: "/projects", label: "프로젝트" },
+    ...(canUpload ? [{ href: "/upload", label: "엑셀 업로드" }] : []),
+    ...(canManageTeam
+      ? [
+          { href: "/deletion-requests", label: "삭제 승인함" },
+          { href: "/team", label: "팀원 관리" },
+        ]
+      : []),
+    ...(canSeeSettings ? [{ href: "/settings/permissions", label: "권한 설정" }] : []),
+  ];
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-surface">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-6">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-xs font-bold text-white">
-                P&L
-              </span>
-              <span className="text-sm font-bold">{membership.companyName}</span>
-            </Link>
-            <nav className="flex items-center gap-4 text-sm text-muted">
-              <Link href="/dashboard" className="hover:text-foreground">
-                대시보드
-              </Link>
-              <Link href="/projects" className="hover:text-foreground">
-                프로젝트
-              </Link>
-              {canUpload && (
-                <Link href="/upload" className="hover:text-foreground">
-                  엑셀 업로드
-                </Link>
-              )}
-              {canManageTeam && (
-                <>
-                  <Link href="/deletion-requests" className="hover:text-foreground">
-                    삭제 승인함
-                  </Link>
-                  <Link href="/team" className="hover:text-foreground">
-                    팀원 관리
-                  </Link>
-                </>
-              )}
-              {canSeeSettings && (
-                <Link href="/settings/permissions" className="hover:text-foreground">
-                  권한 설정
-                </Link>
-              )}
-            </nav>
-          </div>
-          <div className="flex items-center gap-3 text-xs text-muted">
-            <span>
-              {membership.displayName ?? membership.email} · {roleLabel[membership.role]}
-              {membership.isRepresentative && " · 대표"}
-            </span>
-            <form action={logout}>
-              <button type="submit" className="hover:text-foreground hover:underline">
-                로그아웃
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
+      <SiteHeader
+        brandHref="/dashboard"
+        brandLabel="P&L"
+        brandClassName="bg-accent"
+        title={membership.companyName}
+        userLabel={membership.displayName ?? membership.email}
+        roleLabel={roleLabel[membership.role]}
+        isRepresentative={membership.isRepresentative}
+        navItems={navItems}
+      />
       <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
     </div>
   );
