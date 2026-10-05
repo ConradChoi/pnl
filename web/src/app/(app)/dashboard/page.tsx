@@ -149,25 +149,36 @@ export default async function DashboardPage({
         </Card>
       )}
 
-      <form className="mb-4 flex flex-wrap items-center gap-2" method="get">
-        <select name="year" defaultValue={year ?? "전체"} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs">
-          <option value="전체">전체 연도</option>
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}년
-            </option>
-          ))}
-        </select>
-        <select name="status" defaultValue={status ?? "전체"} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs">
-          {["전체", "진행중", "진행완료", "진행예정"].map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-        <input name="q" defaultValue={q ?? ""} placeholder="프로젝트명 검색" className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs" />
-        <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold hover:border-accent">필터 적용</button>
-      </form>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <form className="flex flex-wrap items-center gap-2" method="get">
+          <select name="year" defaultValue={year ?? "전체"} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs">
+            <option value="전체">전체 연도</option>
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y}년
+              </option>
+            ))}
+          </select>
+          <select name="status" defaultValue={status ?? "전체"} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs">
+            {["전체", "진행중", "진행완료", "진행예정"].map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <input name="q" defaultValue={q ?? ""} placeholder="프로젝트명 검색" className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs" />
+          <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold hover:border-accent">필터 적용</button>
+        </form>
+
+        {/* SERVICE_SPEC 6.1절: 다운로드는 현재 필터와 무관하게 회사 전체 기간 데이터를 내보내므로,
+            위 필터(연도/상태/검색)로 걸러진 transactions 건수와 무관하게 항상 노출한다. */}
+        <a
+          href="/api/export"
+          className="rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white hover:bg-accent-deep"
+        >
+          ⬇ 엑셀 다운로드
+        </a>
+      </div>
 
       {transactions.length === 0 ? (
         <Card className="text-center text-sm text-muted">
